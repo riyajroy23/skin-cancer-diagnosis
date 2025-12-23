@@ -1,19 +1,45 @@
-import numpy as np
-from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
-from models import transfer_learning_model
-from data import one_hot
-
-y_train_oh = one_hot(y_train)
-y_test_oh = one_hot(y_test)
-
-transfer = KerasClassifier(
-    build_fn=transfer_learning_model,
-    epochs=1,
-    verbose=1
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import (
+    Dense, Dropout, Flatten, BatchNormalization
 )
 
-transfer.fit(
-    X_train.astype(np.float32),
-    y_train_oh.astype(np.float32),
-    validation_data=(X_test.astype(np.float32), y_test_oh.astype(np.float32))
-)
+from src.data.config import IMG_WIDTH, IMG_HEIGHT, NUM_CLASSES
+
+
+def transfer_learning_model(train_base=False):
+    base = tf.keras.applications.VGG16(
+        include_top=False,
+        weights="imagenet",
+        input_shape=(IMG_HEIGHT, IMG_WIDTH, 3),
+    )
+
+    base.trainable = train_base
+
+    model = Sequential([
+        base,
+        Flatten(),
+        BatchNormalization(),
+        Dense(256, activation="relu"),
+        Dropout(0.3),
+        BatchNormalization(),
+        Dense(NUM_CLASSES, activation="softmax"),
+    ])
+
+    opt = keras.optimizers.RMSprop(learning_rate=1e-4)
+
+    model.compile(
+        optimizer=opt,
+        loss="categorical_crossentropy",
+        metrics=[
+            tf.keras.metrics.CategoricalAccuracy(name="accuracy"),
+            tf.keras.metrics.AUC(
+                multi_label=True,
+                num_labels=NUM_CLASSES,
+                name="auc",
+            ),
+        ],
+    )
+
+    return model

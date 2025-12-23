@@ -6,3 +6,7 @@ matplotlib
 seaborn
 tqdm
 tensorflow
+scikeras
+pillow
+flask
+werkzeug

@@ -1,5 +1,5 @@
-# datasets
-src/dataset/images/
+# data
+raw-data/images/
 *.zip
 
 # python cache
