@@ -1,31 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Skin Lesion Classifier</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <meta charset="UTF-8" />
+  <title>Skin Cancer Diagnosis</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
 </head>
 <body>
-    <div class="container">
-        <h1>Skin Lesion Classifier</h1>
-        <p class="subtitle">
-            Upload an image to get a prediction
-        </p>
+  <main class="container">
+    <header class="header">
+    <h1>Skin Lesion Analyzer</h1>
+    <p class="subtitle">
+      AI-assisted skin lesion classification for educational use
+    </p>
+  </header>
 
-        <form method="POST" enctype="multipart/form-data">
-            <label class="upload-box">
-                <input type="file" name="image" accept="image/*" required />
-                <span>Select Image</span>
-            </label>
-            <button type="submit">Analyze</button>
-        </form>
+  <section class="card">
+    <label class="upload-box">
+      <input type="file" id="imageInput" accept="image/*" hidden />
+      <span>Upload a dermoscopic image</span>
+    </label>
 
-        {% if prediction %}
-        <div class="result">
-            <h2>{{ prediction }}</h2>
-            <p>Confidence: {{ "%.2f"|format(confidence * 100) }}%</p>
-        </div>
-        {% endif %}
-    </div>
+    <img id="preview" class="preview hidden" />
+
+    <button id="analyzeBtn">Analyze Image</button>
+
+    <div id="result" class="result hidden"></div>
+  </section>
+
+  <section id="resources" class="resources hidden">
+    <h2>Trusted Resources</h2>
+    <ul>
+      <li><a href="https://www.skincancer.org/" target="_blank">Skin Cancer Foundation</a></li>
+      <li><a href="https://www.cancer.org/" target="_blank">American Cancer Society</a></li>
+    </ul>
+      <p class="disclaimer">
+        ⚠️ This tool is for educational purposes only and not an official medical diagnosis. Please consult a licensed professional to analyze and diagnose any skin lesions you may have.
+      </p>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='upload.js') }}"></script>
 </body>
 </html>
